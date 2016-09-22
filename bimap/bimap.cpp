@@ -133,7 +133,7 @@ bimap::~bimap() {
 }
 
 template<typename T>
-bimap::node const *bimap::min(bimap::node const *curr_node, bimap::data_handler<T> *handler) const {
+bimap::node const *bimap::min(bimap::node const *curr_node, T *handler) const {
     if (handler->get_left(curr_node) == nullptr) {
         return curr_node;
     }
@@ -141,7 +141,7 @@ bimap::node const *bimap::min(bimap::node const *curr_node, bimap::data_handler<
 }
 
 template<typename T>
-bimap::node const *bimap::max(bimap::node const *node, bimap::data_handler<T> *handler) const {
+bimap::node const *bimap::max(bimap::node const *node, T *handler) const {
     if (handler->get_right(node) == nullptr) {
         return node;
     }
@@ -149,7 +149,7 @@ bimap::node const *bimap::max(bimap::node const *node, bimap::data_handler<T> *h
 }
 
 template<typename T>
-bimap::node const *bimap::next(bimap::node const *curr_node, bimap::data_handler<T> *handler) const {
+bimap::node const *bimap::next(bimap::node const *curr_node, T *handler) const {
     if (handler->get_right(curr_node) != nullptr) {
         return min(handler->get_right(curr_node), handler);
     }
@@ -165,7 +165,7 @@ bimap::node const *bimap::next(bimap::node const *curr_node, bimap::data_handler
 }
 
 template<typename T>
-bimap::node const *bimap::prev(bimap::node const *node, bimap::data_handler<T> *handler) const {
+bimap::node const *bimap::prev(bimap::node const *node, T *handler) const {
     if (handler->get_left(node) != nullptr) {
         return max(handler->get_left(node), handler);
     }
@@ -196,7 +196,7 @@ bimap::left_iterator bimap::insert(left_t const &left, right_t const &right) {
 
 template<typename T>
 bool bimap::insert_node_rec(bimap::node *new_node, bimap::node *curr_node,
-                            bimap::data_handler<T> *handler) {
+                            T *handler) {
     if (handler->get_data(new_node) == handler->get_data(curr_node) && curr_node != &fake_node) {
         if (handler->id == 1) {
             remove_left(curr_node);
@@ -226,7 +226,7 @@ bool bimap::insert_node_rec(bimap::node *new_node, bimap::node *curr_node,
 }
 
 template<typename T>
-void bimap::remove_node(bimap::node const *curr_node, bimap::data_handler<T> *handler) { //not removing pointers here!!!
+void bimap::remove_node(bimap::node const *curr_node, T *handler) { //not removing pointers here!!!
     bimap::node *parent = handler->get_parent(curr_node);
     bimap::node *left_child = handler->get_left(curr_node);
     bimap::node *right_child = handler->get_right(curr_node);
@@ -321,9 +321,9 @@ bimap::right_iterator bimap::find_right(right_t const &right) const {
     }
 }
 
-template<typename T>
+template<typename T, typename U>
 bimap::node const *bimap::find(bimap::node const *curr_node,
-                               data_handler<T> *handler, T const &key) const {
+                               T *handler, U const &key) const {
     if (handler->get_data(curr_node) == key && curr_node != &fake_node) {
         return curr_node;
     }

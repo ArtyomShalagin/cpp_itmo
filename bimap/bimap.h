@@ -103,9 +103,9 @@ private:
 
         virtual ~data_handler() { }
 
-        virtual T get_data(node *) = 0;
+        virtual T& get_data(node *) = 0;
 
-        virtual T const get_data(node const *) = 0;
+        virtual T const& get_data(node const *) = 0;
 
         virtual node* get_left(node const*) = 0;
 
@@ -126,25 +126,25 @@ private:
     };
 
     template<typename T>
-    bool insert_node_rec(node*, node*, data_handler<T>*);
+    bool insert_node_rec(node*, node*, T*);
 
     template<typename T>
-    void remove_node(node const*, data_handler<T>*);
+    void remove_node(node const*, T*);
 
     template<typename T>
-    node const* min(node const*, data_handler<T>*) const;
+    node const* min(node const*, T*) const;
 
     template<typename T>
-    node const* max(node const*, data_handler<T>*) const;
+    node const* max(node const*, T*) const;
 
     template<typename T>
-    node const* next(node const*, data_handler<T>*) const;
+    node const* next(node const*, T*) const;
 
     template<typename T>
-    node const* prev(node const*, data_handler<T>*) const;
+    node const* prev(node const*, T*) const;
 
-    template<typename T>
-    node const* find(node const*, data_handler<T>*, T const& key) const;
+    template<typename T, typename U>
+    node const* find(node const*, T*, U const& key) const;
 
     struct left_data_handler : data_handler<left_t> {
         left_data_handler(bimap const* map) {
@@ -152,11 +152,11 @@ private:
             id = 0;
         }
 
-        virtual left_t get_data(node *n) {
+        virtual left_t& get_data(node *n) {
             return n->left_data;
         }
 
-        virtual left_t const get_data(node const* n) {
+        virtual left_t const& get_data(node const* n) {
             return n->left_data;
         }
 
@@ -195,11 +195,11 @@ private:
             id = 1;
         }
 
-        virtual right_t get_data(node *n) {
+        virtual right_t& get_data(node *n) {
             return n->right_data;
         }
 
-        virtual right_t const get_data(node const* n) {
+        virtual right_t const& get_data(node const* n) {
             return n->right_data;
         }
 
