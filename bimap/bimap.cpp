@@ -206,7 +206,7 @@ bool bimap::insert_node_rec(bimap::node *new_node, bimap::node *curr_node,
         //would take too much time
         return false;
     } else if (handler->get_data(new_node) < handler->get_data(curr_node) || //have to go left
-               curr_node == handler->get_fake()) { ;
+               curr_node == handler->get_fake()) {
         if (handler->get_left(curr_node) == nullptr) {                       //doesn't have left child
             handler->set_left(curr_node, new_node);
             handler->set_parent(new_node, curr_node);
