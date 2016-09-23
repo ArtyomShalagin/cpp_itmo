@@ -5,8 +5,8 @@
 #include <iostream>
 
 struct bimap {
-    typedef std::string left_t;
-    typedef std::string right_t;
+    typedef int left_t;
+    typedef int right_t;
 
     struct left_iterator;
     struct right_iterator;
@@ -92,83 +92,86 @@ private:
 
     node fake_node;
 
-    bool insert_left(node*);
-    bool insert_right(node*);
-    void remove_left(node const*);
-    void remove_right(node const*);
+    bool insert_left(node *);
+
+    bool insert_right(node *);
+
+    void remove_left(node const *);
+
+    void remove_right(node const *);
 
     template<typename T>
     struct data_handler {
-        data_handler() {}
+        data_handler() { }
 
         virtual ~data_handler() { }
 
-        virtual T& get_data(node *) = 0;
+        virtual T &get_data(node *) = 0;
 
-        virtual T const& get_data(node const *) = 0;
+        virtual T const &get_data(node const *) = 0;
 
-        virtual node* get_left(node const*) = 0;
+        virtual node *get_left(node const *) = 0;
 
-        virtual node* get_right(node const*) = 0;
+        virtual node *get_right(node const *) = 0;
 
-        virtual node *get_parent(node const*) = 0;
+        virtual node *get_parent(node const *) = 0;
 
-        virtual void set_left(node* to, node * from) = 0;
+        virtual void set_left(node *to, node *from) = 0;
 
-        virtual void set_right(node * to, node * from) = 0;
+        virtual void set_right(node *to, node *from) = 0;
 
-        virtual void set_parent(node * to, node * from) = 0;
+        virtual void set_parent(node *to, node *from) = 0;
 
-        virtual node const* get_fake() = 0;
+        virtual node const *get_fake() = 0;
 
-        bimap const* map;
+        bimap const *map;
         uint8_t id;
     };
 
     template<typename T>
-    bool insert_node_rec(node*, node*, T*);
+    bool insert_node_rec(node *, node *, T *);
 
     template<typename T>
-    void remove_node(node const*, T*);
+    void remove_node(node const *, T *);
 
     template<typename T>
-    node const* min(node const*, T*) const;
+    node const *min(node const *, T *) const;
 
     template<typename T>
-    node const* max(node const*, T*) const;
+    node const *max(node const *, T *) const;
 
     template<typename T>
-    node const* next(node const*, T*) const;
+    node const *next(node const *, T *) const;
 
     template<typename T>
-    node const* prev(node const*, T*) const;
+    node const *prev(node const *, T *) const;
 
     template<typename T, typename U>
-    node const* find(node const*, T*, U const& key) const;
+    node const *find(node const *, T *, U const &key) const;
 
     struct left_data_handler : data_handler<left_t> {
-        left_data_handler(bimap const* map) {
+        left_data_handler(bimap const *map) {
             this->map = map;
             id = 0;
         }
 
-        virtual left_t& get_data(node *n) {
+        virtual left_t &get_data(node *n) {
             return n->left_data;
         }
 
-        virtual left_t const& get_data(node const* n) {
+        virtual left_t const &get_data(node const *n) {
             return n->left_data;
         }
 
-        virtual node* get_left(node const* n) {
+        virtual node *get_left(node const *n) {
             return n->left_left;
         }
 
-        virtual node* get_right(node const* n) {
+        virtual node *get_right(node const *n) {
             return n->left_right;
         }
 
-        virtual node* get_parent(node const *n) {
+        virtual node *get_parent(node const *n) {
             return n->left_parent;
         }
 
@@ -184,30 +187,30 @@ private:
             n->left_parent = source;
         }
 
-        virtual node const* get_fake() {
+        virtual node const *get_fake() {
             return &(map->fake_node);
         }
     };
 
     struct right_data_handler : data_handler<right_t> {
-        right_data_handler(bimap const* map) {
+        right_data_handler(bimap const *map) {
             this->map = map;
             id = 1;
         }
 
-        virtual right_t& get_data(node *n) {
+        virtual right_t &get_data(node *n) {
             return n->right_data;
         }
 
-        virtual right_t const& get_data(node const* n) {
+        virtual right_t const &get_data(node const *n) {
             return n->right_data;
         }
 
-        virtual node* get_left(node const* n) {
+        virtual node *get_left(node const *n) {
             return n->right_left;
         }
 
-        virtual node* get_right(node const* n) {
+        virtual node *get_right(node const *n) {
             return n->right_right;
         }
 
@@ -227,7 +230,7 @@ private:
             n->right_parent = source;
         }
 
-        virtual node const* get_fake() {
+        virtual node const *get_fake() {
             return &(map->fake_node);
         }
     };
@@ -237,7 +240,7 @@ private:
 struct bimap::left_iterator {
     friend struct bimap;
 
-    left_iterator(node const*, bimap const*);
+    left_iterator(node const *, bimap const *);
 
     ~left_iterator();
 
@@ -268,17 +271,18 @@ struct bimap::left_iterator {
     right_iterator flip() const;
 
     bool operator==(const left_iterator) const;
+
     bool operator!=(const left_iterator) const;
 
 private:
-    node const* link;
-    bimap const* map;
+    node const *link;
+    bimap const *map;
 };
 
 struct bimap::right_iterator {
     friend struct bimap;
 
-    right_iterator(node const*, bimap const*);
+    right_iterator(node const *, bimap const *);
 
     ~right_iterator();
 
@@ -296,11 +300,12 @@ struct bimap::right_iterator {
     left_iterator flip() const;
 
     bool operator==(const right_iterator) const;
+
     bool operator!=(const right_iterator) const;
 
 private:
-    node const* link;
-    bimap const* map;
+    node const *link;
+    bimap const *map;
 };
 
 

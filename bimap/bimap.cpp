@@ -206,7 +206,7 @@ bool bimap::insert_node_rec(bimap::node *new_node, bimap::node *curr_node,
         //would take too much time
         return false;
     } else if (handler->get_data(new_node) < handler->get_data(curr_node) || //have to go left
-               curr_node == handler->get_fake()) {;
+               curr_node == handler->get_fake()) { ;
         if (handler->get_left(curr_node) == nullptr) {                       //doesn't have left child
             handler->set_left(curr_node, new_node);
             handler->set_parent(new_node, curr_node);
@@ -324,11 +324,11 @@ bimap::right_iterator bimap::find_right(right_t const &right) const {
 template<typename T, typename U>
 bimap::node const *bimap::find(bimap::node const *curr_node,
                                T *handler, U const &key) const {
-    if (handler->get_data(curr_node) == key && curr_node != &fake_node) {
-        return curr_node;
-    }
     if (curr_node == nullptr) {
         return nullptr;
+    }
+    if (curr_node != &fake_node && handler->get_data(curr_node) == key) {
+        return curr_node;
     }
     if (key < handler->get_data(curr_node) || curr_node == &fake_node) {
         return find(handler->get_left(curr_node), handler, key);
