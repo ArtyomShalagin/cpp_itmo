@@ -2,6 +2,11 @@
 
 #include <string>
 #include <iostream>
+#include <bitset>
+#include <limits>
+
+using std::cout;
+using std::endl;
 
 uint32_t const BASE_LEN = 32;
 uint64_t const BASE = 1ull << BASE_LEN;
@@ -41,7 +46,9 @@ big_integer::big_integer(std::string const &str) {
     big_integer curr_pow = 1;
     big_integer res;
     for (size_t i = str.size() - 1; i < str.size() && i >= bound; i--) {
-        res += std::stoi(str.substr(i, 1)) * curr_pow;
+        int x = std::stoi(str.substr(i, 1));
+        big_integer tmp = x * curr_pow;
+        res += tmp;
         curr_pow *= 10;
     }
     val = res.val;
@@ -50,7 +57,6 @@ big_integer::big_integer(std::string const &str) {
 }
 
 big_integer::~big_integer() {
-    val.clear();
 }
 
 big_integer &big_integer::operator=(big_integer const &other) {
@@ -157,7 +163,7 @@ void big_integer::div_short(big_integer &a, big_integer const &b) {
     uint64_t c = 0;
     for (size_t i = a.val.size() - 1; i < a.val.size(); i--) {
         uint64_t curr = a.val[i] + (c << BASE_LEN);
-        a.val[i] = curr / b.val[0];
+        a.val[i] = (uint32_t) (curr / b.val[0]);
         c = curr % b.val[0];
     }
     clear_zeros(a);
@@ -213,7 +219,6 @@ void big_integer::div_long(big_integer &a, big_integer const &b) {
         }
 
         curr -= (last_l ? mid : mid - arg);
-
         res.val.push_back((uint32_t) l);
     }
 
@@ -325,7 +330,7 @@ big_integer &big_integer::operator<<=(int rhs) {
     }
     rhs %= BASE_LEN;
     for (int32_t i = (int32_t) (val.size() - 2); i >= shift; i--) {
-        //because it is C++ and >> 32 is undefined behavior
+        // >> 32 is undefined behavior
         val[i + 1] |= rhs == 0 ? 0 : (val[i - shift] >> (BASE_LEN - rhs));
         val[i] = 0 | ((uint32_t) (val[i - shift] << rhs));
     }
