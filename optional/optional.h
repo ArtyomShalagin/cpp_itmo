@@ -24,7 +24,7 @@ struct optional {
     }
 
     optional(T &&value) : valid(true) {
-        new(&data) T(std::forward<T>(value));
+        new(&data) T(std::move(value));
     }
 
     optional(const optional &other) : valid(other.valid) {
@@ -44,6 +44,7 @@ struct optional {
     template<typename... Args>
     optional(in_place_t, Args &&... args) {
         new(&data) T(std::forward<Args>(args)...);
+        valid = true;
     }
 
     optional &operator=(optional other) {
@@ -64,7 +65,6 @@ struct optional {
     }
 
     T &operator*() {
-//        return *reinterpret_cast<T *>(&data);
         return reinterpret_cast<T &>(data);
     }
 
@@ -80,23 +80,23 @@ struct optional {
         if (valid) {
             return **this;
         } else {
-            return std::forward<T>(default_value);
+            return std::move(default_value);
         }
     }
 
     void reset() {
-        reinterpret_cast<T *>(&data)->T::~T();
         valid = false;
+        reinterpret_cast<T *>(&data)->T::~T();
     }
 
     template<typename... Args>
     void emplace(Args &&... args) {
-        try {
-            new(&data) T(std::forward<Args>(args)...);
-            valid = true;
-        } catch (...) {
+        if (valid) {
+            reinterpret_cast<T *>(&data)->T::~T();
             valid = false;
         }
+        new(&data) T(std::forward<Args>(args)...);
+        valid = true;
     }
 
     void swap(optional &other) {
@@ -104,23 +104,17 @@ struct optional {
             if (other) {
                 std::swap(**this, *other);
             } else {
-                try {
-                    new(&other.data) T(**this);
-                    reinterpret_cast<T *>(&data)->T::~T();
-                    valid = false;
-                    other.valid = true;
-                } catch (...) { // just leave it as is
-                }
+                new(&other.data) T(**this);
+                other.valid = true;
+                valid = false;
+                reinterpret_cast<T *>(&data)->T::~T();
             }
         } else {
             if (other) {
-                try {
-                    new(&data) T(*other);
-                    reinterpret_cast<T *>(&other.data)->T::~T();
-                    other.valid = false;
-                    valid = true;
-                } catch (...) { // same
-                }
+                new(&data) T(*other);
+                valid = true;
+                other.valid = false;
+                reinterpret_cast<T *>(&other.data)->T::~T();
             }
         }
     }
@@ -179,10 +173,10 @@ bool operator>=(optional<T> &first, optional<T> &second) {
 }
 
 template<typename T>
-bool operator==(optional<T> &first, optional<T> &second) { //TODO test this
+bool operator==(optional<T> &first, optional<T> &second) {
     if (bool(first) ^ bool(second)) {
         return false;
-    } else if (bool(first) && bool(second)) {
+    } else if (first && second) {
         return *first == *second;
     }
     return true;
