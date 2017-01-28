@@ -35,7 +35,7 @@ struct bind_t {
     Func func;
     args_t args;
 
-    bind_t(Func &&func, Args &&... args) :
+    bind_t(F &&func, Args &&... args) :
             func(std::forward<Func>(func)), args(std::forward<Args>(args)...) { }
 
     auto get_range() {
