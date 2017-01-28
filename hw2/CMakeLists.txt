@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(BigInteger)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -fsanitize=undefined")
 
 include_directories(${BigInteger_SOURCE_DIR})
 
@@ -9,11 +9,12 @@ include_directories(${BigInteger_SOURCE_DIR})
 set(SOURCE_FILES
         big_integer.cpp
 #        big_integer_testing
-        main.cpp
-#        big_integer_testing.cpp gtest/gtest-all.cc gtest/gtest_main.cc
-#        vector.tpp vector.h
+#        main.cpp
+        big_integer_testing.cpp gtest/gtest-all.cc gtest/gtest_main.cc
+#        vector.cpp
+        vector.h
 #        array_pointer.cpp
-#        array_pointer.h
+        array_pointer.h
 #        my_vector.h
         )
 

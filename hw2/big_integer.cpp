@@ -70,7 +70,7 @@ void big_integer::unsigned_add(big_integer &a, big_integer const &b) {
     if (a.val.size() <= b.val.size()) {
         a.val.resize(b.val.size() + 1);
     }
-    for (int32_t i = 0; i < b.val.size() || c; i++) {
+    for (size_t i = 0; i < b.val.size() || c; i++) {
         uint64_t x = c + (i < b.val.size() ? b.val[i] : 0) + a.val[i];
         a.val[i] = (uint32_t) x;
         c = x >> BASE_LEN;
@@ -324,8 +324,8 @@ big_integer &big_integer::operator^=(big_integer const &rhs) {
 }
 
 big_integer &big_integer::operator<<=(int rhs) {
-    int shift = rhs / BASE_LEN;
-    for (size_t i = 0; i <= shift; i++) {
+    int32_t shift = rhs / BASE_LEN;
+    for (size_t i = 0; i <= (size_t) shift; i++) {
         val.push_back(0);
     }
     rhs %= BASE_LEN;
@@ -334,7 +334,7 @@ big_integer &big_integer::operator<<=(int rhs) {
         val[i + 1] |= rhs == 0 ? 0 : (val[i - shift] >> (BASE_LEN - rhs));
         val[i] = 0 | ((uint32_t) (val[i - shift] << rhs));
     }
-    for (int32_t i = shift - 1; i >= 0; i--) {
+    for (int32_t i = (int32_t) shift - 1; i >= 0; i--) {
         val[i] = 0;
     }
 
@@ -343,18 +343,18 @@ big_integer &big_integer::operator<<=(int rhs) {
 }
 
 big_integer &big_integer::operator>>=(int rhs) {
-    if (rhs >= BASE_LEN * val.size()) {
+    if ((size_t) rhs >= BASE_LEN * val.size()) {
         *this = 0;
         return *this;
     }
-    int32_t shift = rhs / BASE_LEN;
+    size_t shift = rhs / BASE_LEN;
     rhs %= BASE_LEN;
 
     bool lostOnes = false;
     for (size_t i = 0; i < shift; i++) {
         lostOnes |= val[i] != 0;
     }
-    lostOnes |= ((uint32_t) (val[shift] << (BASE_LEN - rhs))) != 0;
+    lostOnes |= (uint32_t) (rhs == 0 ? 0 : (val[shift] << (BASE_LEN - rhs))) != 0;
 
     val[0] = val[shift] >> rhs;
     for (size_t i = 0; i < val.size() - shift - 1; i++) {

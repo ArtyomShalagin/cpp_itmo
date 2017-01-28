@@ -26,11 +26,11 @@ struct range_builder<0, Curr...> {
     typedef variadic_range<Curr...> range;
 };
 
-template<typename Func, typename... Args>
+template<typename F, typename... Args>
 struct bind_t {
 //    typedef std::tuple<typename std::decay<Args>::type...> args_t;
     typedef std::tuple<typename std::remove_reference<Args>::type...> args_t;
-//    typedef std::tuple<Args...> args_t;
+    typedef typename std::decay<F>::type Func;
 
     Func func;
     args_t args;
