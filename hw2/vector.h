@@ -31,7 +31,7 @@ struct vector {
     size_t size() const;
 
 private:
-    static const size_t STATIC_SIZE = 0;
+    static const size_t STATIC_SIZE = 2;
     static const size_t DEFAULT_SIZE = 10;
     size_t _size, real_size;
     union {
