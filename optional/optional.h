@@ -29,7 +29,7 @@ struct optional {
 
     optional(const optional &other) : valid(other.valid) {
         if (valid) {
-            new(&data) T(*const_cast<optional &>(other));
+            new(&data) T(*other);
         }
     }
 
@@ -70,6 +70,14 @@ struct optional {
 
     T *operator->() {
         return reinterpret_cast<T *>(&data);
+    }
+
+    T const &operator*() const {
+        return reinterpret_cast<T const &>(data);
+    }
+
+    T const *operator->() const {
+        return reinterpret_cast<T const *>(&data);
     }
 
     explicit operator bool() {
